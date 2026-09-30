@@ -1,4 +1,4 @@
-﻿name: Build AyuGram Windows
+name: Build AyuGram Windows
 
 on:
   push:
@@ -24,6 +24,14 @@ jobs:
         with:
           submodules: recursive
           path: tdesktop
+
+      - name: Apply Liquid Glass and Fluid UI Patches
+        shell: bash
+        run: |
+          if [ -f tdesktop/patches/lib_ui_fluid_animations.patch ]; then
+            git -C tdesktop/Telegram/lib_ui apply ../../patches/lib_ui_fluid_animations.patch || true
+            echo "lib_ui fluid animations patch applied."
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5

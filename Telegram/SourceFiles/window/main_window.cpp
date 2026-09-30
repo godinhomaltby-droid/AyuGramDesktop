@@ -640,7 +640,7 @@ void MainWindow::updatePalette() {
 	Ui::ForceFullRepaint(this);
 
 	auto p = palette();
-	p.setColor(QPalette::Window, st::windowBg->c);
+	p.setColor(QPalette::Window, Qt::transparent);
 	setPalette(p);
 }
 

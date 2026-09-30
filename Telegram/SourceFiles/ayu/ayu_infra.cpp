@@ -24,6 +24,7 @@
 #include <QtGui/QFontDatabase>
 #include "core/application.h"
 #include "core/core_settings.h"
+#include "window/themes/window_theme.h"
 
 
 namespace AyuInfra {
@@ -98,6 +99,7 @@ void init() {
 	initWorker();
 	initRCManager();
 	initTranslator();
+	Window::Theme::ApplyLiquidGlassPalette();
 }
 
 

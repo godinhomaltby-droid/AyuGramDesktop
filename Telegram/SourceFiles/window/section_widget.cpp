@@ -398,7 +398,9 @@ void SectionWidget::PaintBackground(
 		bool paused) {
 	const auto &background = theme->background();
 	if (background.colorForFill) {
-		p.fillRect(clip, *background.colorForFill);
+		auto c = *background.colorForFill;
+		c.setAlpha(175);
+		p.fillRect(clip, c);
 		return;
 	}
 	const auto &gradient = background.gradientForFill;
@@ -435,9 +437,11 @@ void SectionWidget::PaintBackground(
 		if (cache.waitingForNegativePattern) {
 			// While we wait for pattern being loaded we paint just gradient.
 			// But in case of negative patter opacity we just fill-black.
-			p.fillRect(to, Qt::black);
+			p.fillRect(to, QColor(0, 0, 0, 180));
 		} else if (cache.area == fill) {
+			p.setOpacity(0.68);
 			p.drawPixmap(to, cache.pixmap);
+			p.setOpacity(1.0);
 			if (background.giftId && !cache.giftArea.isEmpty()) {
 				paintGift(cache.giftArea.translated(to.topLeft()));
 			}
@@ -450,12 +454,14 @@ void SectionWidget::PaintBackground(
 					: int(std::floor(value));
 			};
 			const auto sto = QPoint(round(to.x() * sx), round(to.y() * sy));
+			p.setOpacity(0.68);
 			p.drawPixmap(
 				sto.x(),
 				sto.y(),
 				round((to.x() + to.width()) * sx) - sto.x(),
 				round((to.y() + to.height()) * sy) - sto.y(),
 				cache.pixmap);
+			p.setOpacity(1.0);
 			if (background.giftId && !cache.giftArea.isEmpty()) {
 				paintGift(QRect(
 					(to.x() + cache.giftArea.x()) * sx,

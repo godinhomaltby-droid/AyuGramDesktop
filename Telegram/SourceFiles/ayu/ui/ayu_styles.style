@@ -14,7 +14,7 @@ using "info/info.style";
 using "settings/settings.style";
 
 iconPickerSelectedPadding: 2px;
-iconPickerSelectedRounding: 16px;
+iconPickerSelectedRounding: 18px;
 iconPickerImagePadding: 4px;
 iconPickerIconSize: 64px;
 
@@ -25,7 +25,7 @@ imageViewInnerPadding: margins(14px, 14px, 14px, 14px);
 botWebViewPanelHeightIncreased: 782px;
 botWebViewPanelWidthIncreased: 512px;
 
-stickerRoundingSize: 8px;
+stickerRoundingSize: 12px;
 
 
 messageShotPadding: 4px;
@@ -72,7 +72,7 @@ exteraBadgeToastBadge: InfoPeerBadge(infoPeerBadge) {
 
 supportLogoSize: 96px;
 
-unreadPillPadding: 14px;
+unreadPillPadding: 16px;
 
 
 infoProfileLabeledButtonRegistrationDate: IconButton(defaultIconButton) {

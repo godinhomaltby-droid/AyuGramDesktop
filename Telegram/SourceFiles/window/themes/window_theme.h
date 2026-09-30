@@ -104,6 +104,7 @@ void ToggleNightModeWithConfirmation(
 void ResetToSomeDefault();
 [[nodiscard]] bool IsNonDefaultBackground();
 void Revert();
+void ApplyLiquidGlassPalette();
 
 [[nodiscard]] rpl::producer<bool> IsThemeDarkValue();
 

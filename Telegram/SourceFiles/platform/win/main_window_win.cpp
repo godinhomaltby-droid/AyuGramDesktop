@@ -710,6 +710,11 @@ void MainWindow::initHook() {
 
 	setAttribute(Qt::WA_TranslucentBackground, true);
 
+	const auto exStyle = GetWindowLongPtr(_hWnd, GWL_EXSTYLE);
+	if (exStyle & WS_EX_LAYERED) {
+		SetWindowLongPtr(_hWnd, GWL_EXSTYLE, exStyle & ~WS_EX_LAYERED);
+	}
+
 	WTSRegisterSessionNotification(_hWnd, NOTIFY_FOR_THIS_SESSION);
 
 	using namespace base::Platform;

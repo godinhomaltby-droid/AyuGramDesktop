@@ -524,6 +524,7 @@ void ChatBackground::initialRead() {
 }
 
 void ChatBackground::start() {
+	ApplyLiquidGlassPalette();
 	saveAdjustableColors();
 
 	_updates.events(
@@ -1070,8 +1071,37 @@ void ChatBackground::restoreAdjustableColors() {
 	}
 }
 
+void ApplyLiquidGlassPalette() {
+	const auto isNight = IsNightMode();
+	if (isNight) {
+		style::main_palette::setColor(QLatin1String("windowBg"), 18, 24, 32, 165);
+		style::main_palette::setColor(QLatin1String("windowBgOver"), 28, 38, 50, 190);
+		style::main_palette::setColor(QLatin1String("windowBgRipple"), 34, 46, 60, 205);
+		style::main_palette::setColor(QLatin1String("dialogsBg"), 16, 22, 30, 155);
+		style::main_palette::setColor(QLatin1String("dialogsBgOver"), 25, 35, 48, 185);
+		style::main_palette::setColor(QLatin1String("topBarBg"), 18, 24, 32, 170);
+		style::main_palette::setColor(QLatin1String("historyComposeAreaBg"), 18, 24, 32, 175);
+		style::main_palette::setColor(QLatin1String("msgInBg"), 28, 36, 44, 210);
+		style::main_palette::setColor(QLatin1String("msgOutBg"), 38, 105, 175, 230);
+		style::main_palette::setColor(QLatin1String("dialogsUnreadBg"), 45, 135, 240, 255);
+		style::main_palette::setColor(QLatin1String("shadowFg"), 255, 255, 255, 24);
+	} else {
+		style::main_palette::setColor(QLatin1String("windowBg"), 250, 250, 252, 175);
+		style::main_palette::setColor(QLatin1String("windowBgOver"), 235, 238, 245, 195);
+		style::main_palette::setColor(QLatin1String("windowBgRipple"), 225, 230, 240, 210);
+		style::main_palette::setColor(QLatin1String("dialogsBg"), 245, 247, 250, 165);
+		style::main_palette::setColor(QLatin1String("dialogsBgOver"), 232, 236, 242, 190);
+		style::main_palette::setColor(QLatin1String("topBarBg"), 250, 250, 252, 180);
+		style::main_palette::setColor(QLatin1String("historyComposeAreaBg"), 250, 250, 252, 180);
+		style::main_palette::setColor(QLatin1String("msgInBg"), 255, 255, 255, 220);
+		style::main_palette::setColor(QLatin1String("msgOutBg"), 215, 240, 255, 230);
+		style::main_palette::setColor(QLatin1String("shadowFg"), 0, 0, 0, 24);
+	}
+}
+
 void ChatBackground::setTestingTheme(Instance &&theme) {
 	style::main_palette::apply(theme.palette);
+	ApplyLiquidGlassPalette();
 	saveAdjustableColors();
 
 	auto switchToThemeBackground = !theme.background.isNull()
@@ -1113,6 +1143,7 @@ void ChatBackground::setTestingDefaultTheme() {
 
 void ChatBackground::applyDefaultThemeAccentColorizer() {
 	style::main_palette::reset(ColorizerForTheme(QString()));
+	ApplyLiquidGlassPalette();
 	saveAdjustableColors();
 }
 
@@ -1347,6 +1378,7 @@ bool ApplyEditedPalette(const QByteArray &content) {
 		return false;
 	}
 	style::main_palette::apply(out.palette);
+	ApplyLiquidGlassPalette();
 	Background()->appliedEditedPalette();
 	return true;
 }
