@@ -276,6 +276,7 @@ void Application::run() {
 
 	startLocalStorage();
 
+	AyuInfra::initFonts();
 	style::SetCustomFont(settings().customFontFamily());
 	style::internal::StartFonts();
 

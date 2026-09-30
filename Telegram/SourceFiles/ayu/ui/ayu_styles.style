@@ -14,18 +14,19 @@ using "info/info.style";
 using "settings/settings.style";
 
 iconPickerSelectedPadding: 2px;
-iconPickerSelectedRounding: 12px;
+iconPickerSelectedRounding: 16px;
 iconPickerImagePadding: 4px;
 iconPickerIconSize: 64px;
 
 recentStickersLimitPadding: margins(22px, 4px, 22px, 8px);
-imageViewPadding: margins(22px, 10px, 22px, 10px);
-imageViewInnerPadding: margins(16px, 16px, 16px, 16px);
+imageViewPadding: margins(20px, 12px, 20px, 12px);
+imageViewInnerPadding: margins(14px, 14px, 14px, 14px);
 
 botWebViewPanelHeightIncreased: 782px;
 botWebViewPanelWidthIncreased: 512px;
 
-stickerRoundingSize: 5px;
+stickerRoundingSize: 8px;
+
 
 messageShotPadding: 4px;
 
@@ -71,7 +72,8 @@ exteraBadgeToastBadge: InfoPeerBadge(infoPeerBadge) {
 
 supportLogoSize: 96px;
 
-unreadPillPadding: 12px;
+unreadPillPadding: 14px;
+
 
 infoProfileLabeledButtonRegistrationDate: IconButton(defaultIconButton) {
 	width: 34px;
@@ -116,7 +118,7 @@ ghostPickerButton: LinkButton(defaultLinkButton) {
 	overFont: font(boxFontSize);
 }
 
-ayuBetaBadgePadding: margins(4px, 1px, 4px, 1px);
+ayuBetaBadgePadding: margins(6px, 2px, 6px, 2px);
 
 ayuServiceTimeBadgeFont: font(11px semibold);
 ayuServiceTimeBadgeHorizontalPadding: 7px;

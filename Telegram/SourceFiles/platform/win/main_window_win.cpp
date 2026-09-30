@@ -708,6 +708,8 @@ void MainWindow::initHook() {
 		return;
 	}
 
+	setAttribute(Qt::WA_TranslucentBackground, true);
+
 	WTSRegisterSessionNotification(_hWnd, NOTIFY_FOR_THIS_SESSION);
 
 	using namespace base::Platform;
@@ -730,6 +732,41 @@ void MainWindow::initHook() {
 		Window::Theme::IsNightMode());
 }
 
+void ApplyWindowBackdrop(HWND hWnd, bool night) {
+	if (!hWnd) {
+		return;
+	}
+
+	MARGINS margins = { -1, -1, -1, -1 };
+	DwmExtendFrameIntoClientArea(hWnd, &margins);
+
+	static const auto kSystemVersion = QOperatingSystemVersion::current();
+	if (kSystemVersion.microVersion() >= 22621) {
+		// Windows 11 22H2+: DWMWA_SYSTEMBACKDROP_TYPE (38)
+		// 3 = DWMSBT_TRANSIENTWINDOW (Acrylic blur), 2 = DWMSBT_MAINWINDOW (Mica)
+		DWORD backdropType = 3;
+		DwmSetWindowAttribute(hWnd, 38, &backdropType, sizeof(backdropType));
+	} else if (kSystemVersion.microVersion() >= 22000) {
+		// Windows 11 21H2: DWMWA_MICA_EFFECT (1029)
+		BOOL mica = TRUE;
+		DwmSetWindowAttribute(hWnd, 1029, &mica, sizeof(mica));
+	} else if (Dlls::SetWindowCompositionAttribute) {
+		struct ACCENT_POLICY {
+			int AccentState;
+			int AccentFlags;
+			DWORD GradientColor;
+			int AnimationId;
+		};
+		ACCENT_POLICY policy = { 4 /* ACCENT_ENABLE_ACRYLICBLURBEHIND */, 2, night ? 0x99181818 : 0x99FFFFFF, 0 };
+		Dlls::WINDOWCOMPOSITIONATTRIBDATA data = {
+			Dlls::WINDOWCOMPOSITIONATTRIB::WCA_ACCENT_POLICY,
+			&policy,
+			sizeof(policy)
+		};
+		Dlls::SetWindowCompositionAttribute(hWnd, &data);
+	}
+}
+
 void MainWindow::validateWindowTheme(bool native, bool night) {
 	if (!IsWindows8OrGreater()) {
 		const auto empty = native ? nullptr : L" ";
@@ -745,7 +782,6 @@ void MainWindow::validateWindowTheme(bool native, bool night) {
 #endif
 	} else if (!native) {
 		SetWindowTheme(_hWnd, nullptr, nullptr);
-		return;
 	}
 
 	// See "https://github.com/microsoft/terminal/blob/"
@@ -776,6 +812,8 @@ void MainWindow::validateWindowTheme(bool native, bool night) {
 	};
 
 	updateStyle();
+	ApplyWindowBackdrop(_hWnd, night);
+
 
 	// See "https://osdn.net/projects/tortoisesvn/scm/svn/blobs/28812/"
 	// "trunk/src/TortoiseIDiff/MainWindow.cpp"

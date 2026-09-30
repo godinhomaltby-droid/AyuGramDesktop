@@ -21,6 +21,11 @@
 #include "ayu/utils/windows_utils.h"
 #endif
 
+#include <QtGui/QFontDatabase>
+#include "core/application.h"
+#include "core/core_settings.h"
+
+
 namespace AyuInfra {
 
 void initLang() {
@@ -67,7 +72,25 @@ void initIcon() {
 #endif
 }
 
+void initFonts() {
+	const auto fontId = QFontDatabase::addApplicationFont(u":/gui/fonts/ayu/sf-pro-text.ttf"_q);
+	if (fontId != -1) {
+		const auto families = QFontDatabase::applicationFontFamilies(fontId);
+		if (!families.isEmpty()) {
+			const auto &family = families.first();
+			LOG(("AyuGram: loaded embedded font family: %1").arg(family));
+			auto &settings = Core::App().settings();
+			if (settings.customFontFamily().isEmpty()) {
+				settings.setCustomFontFamily(family);
+			}
+		}
+	} else {
+		LOG(("AyuGram: failed to load embedded SF Pro font from resources"));
+	}
+}
+
 void init() {
+	initFonts();
 	initLang();
 	initDatabase();
 	initUiSettings();
@@ -76,5 +99,6 @@ void init() {
 	initRCManager();
 	initTranslator();
 }
+
 
 }

@@ -9,5 +9,7 @@
 namespace AyuInfra {
 
 void init();
+void initFonts();
 
 }
+
