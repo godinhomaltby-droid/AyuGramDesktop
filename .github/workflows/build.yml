@@ -1,0 +1,73 @@
+﻿name: Build AyuGram Windows
+
+on:
+  push:
+    branches: [ dev, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build AyuGram (Windows x64)
+    runs-on: windows-2022
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          path: tdesktop
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Prepare directories
+        shell: cmd
+        run: |
+          mkdir Libraries
+          mkdir ThirdParty
+
+      - name: Cache libraries
+        id: cache-libs
+        uses: actions/cache@v4
+        with:
+          path: |
+            Libraries
+            ThirdParty
+          key: ${{ runner.os }}-ayugram-libs-v1-${{ hashFiles('tdesktop/Telegram/build/prepare/**') }}
+          restore-keys: |
+            ${{ runner.os }}-ayugram-libs-v1-
+
+      - name: Prepare libraries
+        if: steps.cache-libs.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          call tdesktop\Telegram\build\prepare\win.bat
+
+      - name: Configure CMake
+        shell: cmd
+        run: |
+          cd tdesktop\Telegram
+          call configure.bat x64 -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
+
+      - name: Build AyuGram
+        shell: cmd
+        run: |
+          cmake --build tdesktop\out --config Release --target Telegram -j %NUMBER_OF_PROCESSORS%
+
+      - name: Upload AyuGram Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AyuGram-LiquidGlass-x64
+          path: |
+            tdesktop/out/Release/AyuGram.exe
+            tdesktop/out/Release/Telegram.exe
+            tdesktop/out/Release/*.exe
+          if-no-files-found: warn
