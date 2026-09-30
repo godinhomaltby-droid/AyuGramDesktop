@@ -11,7 +11,17 @@ jobs:
     runs-on: windows-2022
     timeout-minutes: 360
 
+    env:
+      _CL_: "/Zm300 /FS"
+
     steps:
+      - name: Configure Pagefile (32GB)
+        uses: al-cheb/configure-pagefile-action@v1.4
+        with:
+          minimum-size: 32GB
+          maximum-size: 32GB
+          disk-root: "C:"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -34,22 +44,31 @@ jobs:
           mkdir Libraries
           mkdir ThirdParty
 
-      - name: Cache libraries
+      - name: Restore libraries cache
         id: cache-libs
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             Libraries
             ThirdParty
-          key: ${{ runner.os }}-ayugram-libs-v1-${{ hashFiles('tdesktop/Telegram/build/prepare/**') }}
+          key: ${{ runner.os }}-ayugram-libs-v2-${{ hashFiles('tdesktop/Telegram/build/prepare/**') }}
           restore-keys: |
-            ${{ runner.os }}-ayugram-libs-v1-
+            ${{ runner.os }}-ayugram-libs-v2-
 
       - name: Prepare libraries
         if: steps.cache-libs.outputs.cache-hit != 'true'
         shell: cmd
         run: |
           call tdesktop\Telegram\build\prepare\win.bat
+
+      - name: Save libraries cache
+        if: steps.cache-libs.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            Libraries
+            ThirdParty
+          key: ${{ runner.os }}-ayugram-libs-v2-${{ hashFiles('tdesktop/Telegram/build/prepare/**') }}
 
       - name: Configure CMake
         shell: cmd
@@ -60,7 +79,7 @@ jobs:
       - name: Build AyuGram
         shell: cmd
         run: |
-          cmake --build tdesktop\out --config Release --target Telegram -j %NUMBER_OF_PROCESSORS%
+          cmake --build tdesktop\out --config Release --target Telegram -j 2
 
       - name: Upload AyuGram Artifact
         uses: actions/upload-artifact@v4
