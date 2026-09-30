@@ -11,9 +11,6 @@ jobs:
     runs-on: windows-2022
     timeout-minutes: 360
 
-    env:
-      _CL_: "/Zm300 /FS"
-
     steps:
       - name: Configure Pagefile (32GB)
         uses: al-cheb/configure-pagefile-action@v1.4
@@ -79,6 +76,7 @@ jobs:
       - name: Build AyuGram
         shell: cmd
         run: |
+          set _CL_=/FS
           cmake --build tdesktop\out --config Release --target Telegram -j 2
 
       - name: Upload AyuGram Artifact
